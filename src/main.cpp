@@ -16,13 +16,7 @@ SinricProThermostat &myThermostat = SinricPro[thermostatId];
 SinricProTemperaturesensor &myTemp = SinricPro[tempId];
 SinricProBlinds &myBlinds = SinricPro[blindsId];
 
-temperature tempSensor;
-
-bool onPowerState(const String &deviceId, bool &state) {
-    Serial.printf("Temperaturesensor turned %s (via SinricPro) \r\n", state?"on":"off");
-    deviceIsOn = state; // turn on / off temperature sensor
-    return true; // request handled properly
-}
+temperature tempSensor(&dht, &myTemp, 60000);
 
 void setupWiFi() {
     Serial.printf("\r\n[Wifi]: Connecting");
@@ -38,7 +32,7 @@ void setupWiFi() {
 
 void setupSinricPro() {
 
-    myTemp.onPowerState(onPowerState);
+    myTemp.onPowerState(&temperature::onPowerState);
 
     SinricPro.onConnected([](){ Serial.printf("Connected to SinricPro\r\n"); });
     SinricPro.onDisconnected([](){ Serial.printf("Disconnected from SinricPro\r\n"); });
@@ -55,11 +49,7 @@ void setup() {
     setupSinricPro();
 }
 
-void handleTemperaturesensor() {
-
-}
-
 void loop() {
     SinricPro.handle();
-    handleTemperaturesensor();
+    tempSensor.handleTemperaturesensor();
 }

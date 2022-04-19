@@ -18,10 +18,10 @@ private:
     long waitTime;
     unsigned long lastEvent;
 
-    DHT &dht;
-    SinricProTemperaturesensor &myTemp;
+    DHT *dht;
+    SinricProTemperaturesensor *myTemp;
 public:
-    explicit temperature(DHT &dht, SinricProTemperaturesensor &myTemp, long waitTime);
+    explicit temperature(DHT *dht, SinricProTemperaturesensor *myTemp, long waitTime);
     bool onPowerState(const String &deviceId, bool &state);
     void handleTemperaturesensor();
 };

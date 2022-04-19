@@ -1,12 +1,11 @@
 //
 // Created by noahb on 18.04.2022.
 //
-
 #include "temperature.h"
 
-
 bool temperature::onPowerState(const String &deviceId, bool &state) {
-    return false;
+    deviceIsOn = state;
+    return true;
 }
 
 void temperature::handleTemperaturesensor() {
@@ -15,8 +14,8 @@ void temperature::handleTemperaturesensor() {
     unsigned long actualMillis = millis();
     if (actualMillis - lastEvent < waitTime) return;
 
-    currTemperature = dht.readTemperature();
-    currHumidity = dht.readHumidity();
+    currTemperature = dht->readTemperature();
+    currHumidity = dht->readHumidity();
 
     if (isnan(currTemperature) || isnan(currHumidity)){
         return;
@@ -24,16 +23,15 @@ void temperature::handleTemperaturesensor() {
 
     if (currTemperature == lastTemperature || currHumidity == lastHumidity) return;
 
-    myTemp.sendTemperatureEvent(currTemperature, currHumidity);
+    myTemp->sendTemperatureEvent(currTemperature, currHumidity);
 
 
-    lastTemperature = currTemperature;  // save actual temperature for next compare
-    lastHumidity = currHumidity;        // save actual humidity for next compare
+    lastTemperature = currTemperature;
+    lastHumidity = currHumidity;
     lastEvent = actualMillis;
-    // save actual time for next compare
 }
 
-temperature::temperature(DHT &dht, SinricProTemperaturesensor &myTemp, long waitTime) {
+temperature::temperature(DHT *dht, SinricProTemperaturesensor *myTemp, long waitTime) {
     this->dht = dht;
     this->myTemp = myTemp;
     this->waitTime = waitTime;
