@@ -30,4 +30,4 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(Z_DUMMY_TARGET ${SRC_LIST} src/privateConfig.h src/temperature/temperature.cpp src/temperature/temperature.h)
+add_executable(Z_DUMMY_TARGET ${SRC_LIST} src/privateConfig.h src/temperature/temperature.cpp src/temperature/temperature.h src/thermostat/thermostat.cpp src/thermostat/thermostat.h src/blinds/blinds.cpp src/blinds/blinds.h)

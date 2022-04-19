@@ -1,22 +1,12 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include "SinricPro.h"
-#include "SinricProBlinds.h"
-#include "SinricProTemperaturesensor.h"
-#include "SinricProThermostat.h"
-#include "DHT.h"
 #include "privateConfig.h"
 #include "temperature/temperature.h"
+#include "blinds/blinds.h"
+#include "thermostat/thermostat.h"
 
 #define BAUD_RATE         115200
-
-DHT dht(2, DHT11);
-
-SinricProThermostat &myThermostat = SinricPro[thermostatId];
-SinricProTemperaturesensor &myTemp = SinricPro[tempId];
-SinricProBlinds &myBlinds = SinricPro[blindsId];
-
-temperature tempSensor(&dht, &myTemp, 60000);
 
 void setupWiFi() {
     Serial.printf("\r\n[Wifi]: Connecting");
@@ -31,9 +21,6 @@ void setupWiFi() {
 }
 
 void setupSinricPro() {
-
-    myTemp.onPowerState(&temperature::onPowerState);
-
     SinricPro.onConnected([](){ Serial.printf("Connected to SinricPro\r\n"); });
     SinricPro.onDisconnected([](){ Serial.printf("Disconnected from SinricPro\r\n"); });
     SinricPro.restoreDeviceStates(true);
@@ -43,7 +30,9 @@ void setupSinricPro() {
 void setup() {
     Serial.begin(BAUD_RATE); Serial.printf("\r\n\r\n");
 
-    dht.begin();
+    setupThermostat();
+    setupTemperature();
+    setupBlinds();
 
     setupWiFi();
     setupSinricPro();
@@ -51,5 +40,5 @@ void setup() {
 
 void loop() {
     SinricPro.handle();
-    tempSensor.handleTemperaturesensor();
+    handleTemperature();
 }
